@@ -148,20 +148,8 @@ router.post('/guest', async (req, res) => {
   }
 
   try {
-    // Check if username exists as a registered user
-    const existingUser = await pool.query(
-      'SELECT id FROM users WHERE username = $1',
-      [username.trim()]
-    );
-
-    if (existingUser.rows.length > 0) {
-      // Username exists - suggest adding a number
-      return res.status(409).json({
-        error: 'Username taken. Try: ' + username.trim() + Math.floor(Math.random() * 1000)
-      });
-    }
-
     // Create a guest user entry (no real email, dummy password)
+    // Username uniqueness is NOT enforced for guests - multiple users can have same display name
     const result = await pool.query(
       'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username',
       [username.trim(), `guest_${Date.now()}@quickplay.local`, 'GUEST_NO_PASSWORD']

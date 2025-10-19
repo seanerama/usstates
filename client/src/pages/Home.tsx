@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { GAME_MODES, DIFFICULTIES, GameMode, Difficulty } from '../types';
+import { useAuth } from '../contexts/AuthContext';
 import QuickPlay from '../components/Auth/QuickPlay';
 import '../App.css';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('hard');
   const [showQuickPlay, setShowQuickPlay] = useState(false);
@@ -21,6 +23,18 @@ const Home: React.FC = () => {
   return (
     <div className="home-container">
       <div className="home-content">
+        {/* Auth links for non-logged-in users */}
+        {!user && (
+          <div style={{ textAlign: 'right', marginBottom: '20px' }}>
+            <Link to="/login" style={{ marginRight: '15px', color: '#4a90e2', textDecoration: 'none' }}>
+              Login
+            </Link>
+            <Link to="/register" style={{ color: '#4a90e2', textDecoration: 'none' }}>
+              Register
+            </Link>
+          </div>
+        )}
+
         <div className="home-hero">
           <h1 className="home-title">Learn US States & Capitals</h1>
           <p className="home-description">
@@ -28,6 +42,26 @@ const Home: React.FC = () => {
             Answer clues, click states, and climb the leaderboard!
           </p>
         </div>
+
+        {/* Quick Play - Prominent placement at the top */}
+        <div style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <button
+            className="btn-quick-play"
+            onClick={handleQuickPlay}
+            style={{ maxWidth: '500px', margin: '0 auto' }}
+          >
+            ⚡ Quick Play - Start Now (No Login Required)
+          </button>
+          <p style={{ marginTop: '12px', color: '#666', fontSize: '14px' }}>
+            Jump right in! Just pick a username and play.
+          </p>
+        </div>
+
+        {!user && (
+          <div className="quick-play-divider" style={{ marginBottom: '30px' }}>
+            <span>or create an account to track progress</span>
+          </div>
+        )}
 
         {!selectedMode ? (
           <>
@@ -89,24 +123,11 @@ const Home: React.FC = () => {
                 Start Game →
               </button>
             </div>
-
-            <div className="quick-play-divider">
-              <span>or</span>
-            </div>
-
-            <button
-              className="btn-quick-play"
-              onClick={handleQuickPlay}
-            >
-              ⚡ Quick Play (No Login Required)
-            </button>
           </div>
         )}
 
-        {showQuickPlay && selectedMode && (
+        {showQuickPlay && (
           <QuickPlay
-            gameMode={selectedMode}
-            difficulty={selectedDifficulty}
             onClose={() => setShowQuickPlay(false)}
           />
         )}

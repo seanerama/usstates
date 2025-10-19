@@ -77,22 +77,10 @@ const AppContent: React.FC = () => {
             </PublicRoute>
           }
         />
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/game"
-          element={
-            <ProtectedRoute>
-              <GameBoard />
-            </ProtectedRoute>
-          }
-        />
+        {/* Home is now public - accessible to everyone */}
+        <Route path="/" element={<Home />} />
+        {/* Game is now public - guests can play */}
+        <Route path="/game" element={<GameBoard />} />
         <Route
           path="/leaderboard"
           element={
