@@ -10,10 +10,14 @@ import { GameMode, GameState, SCORING, State, Difficulty } from '../../types';
 import './Game.css';
 
 const GameBoard: React.FC = () => {
+  console.log('GameBoard component mounted');
+
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const gameMode = (searchParams.get('mode') || 'full_usa') as GameMode;
   const difficulty = (searchParams.get('difficulty') || 'hard') as Difficulty;
+
+  console.log('Game mode:', gameMode, 'Difficulty:', difficulty);
 
   const [gameStates, setGameStates] = useState<GameState[]>([]);
   const [allStates, setAllStates] = useState<State[]>([]);
@@ -32,6 +36,7 @@ const GameBoard: React.FC = () => {
 
   useEffect(() => {
     initializeGame();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [gameMode, difficulty]);
 
   useEffect(() => {
