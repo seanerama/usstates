@@ -1,0 +1,25 @@
+{
+  "name": "states-learning-game",
+  "version": "1.0.0",
+  "description": "Educational web game to teach children US states, capitals, and geography",
+  "main": "server/src/server.js",
+  "scripts": {
+    "install-all": "cd server && npm install && cd ../client && npm install",
+    "build": "cd client && npm run build",
+    "start": "cd server && npm start",
+    "dev": "concurrently \"cd server && npm run dev\" \"cd client && npm start\"",
+    "seed": "cd server && npm run seed"
+  },
+  "keywords": [
+    "geography",
+    "education",
+    "game",
+    "us-states",
+    "learning"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
