@@ -46,29 +46,36 @@ const GameBoard: React.FC = () => {
   const initializeGame = async () => {
     try {
       setLoading(true);
+      console.log('Starting game with mode:', gameMode, 'difficulty:', difficulty);
+
       const [sessionData, statesData] = await Promise.all([
         gameAPI.startSession(gameMode, difficulty),
         gameAPI.getAllStates()
       ]);
 
+      console.log('Session data received:', sessionData);
+      console.log('States data received:', statesData);
+
       setSessionId(sessionData.sessionId);
-      setGameStates(
-        sessionData.states.map((s: any) => ({
-          ...s,
-          attempts: 0,
-          hintUsed: false,
-          completed: false,
-          score: 0
-        }))
-      );
+      const mappedStates = sessionData.states.map((s: any) => ({
+        ...s,
+        attempts: 0,
+        hintUsed: false,
+        completed: false,
+        score: 0
+      }));
+
+      console.log('Mapped game states:', mappedStates);
+      setGameStates(mappedStates);
       setAllStates(statesData.states);
       setStartTime(Date.now());
       setTotalScore(0);
       setCurrentIndex(0);
       setCompletedStates(new Set());
-    } catch (error) {
-      toast.error('Failed to start game');
-      console.error(error);
+    } catch (error: any) {
+      console.error('Error initializing game:', error);
+      console.error('Error details:', error.response?.data || error.message);
+      toast.error(`Failed to start game: ${error.response?.data?.error || error.message}`);
     } finally {
       setLoading(false);
     }
