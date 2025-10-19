@@ -270,45 +270,57 @@ const GameBoard: React.FC = () => {
 
   return (
     <div className="game-container">
-      <Sidebar position="left" isOpen={leftSidebarOpen} onClose={() => setLeftSidebarOpen(false)}>
-        {currentState && (
-          <CluePanel
-            clue={currentState.currentClue}
-            clueLevel={currentState.clueLevel}
-            canRequestHint={!currentState.hintUsed && currentState.attempts === 0 && currentState.clueLevel < 3}
-            onRequestHint={handleRequestHint}
-            currentScore={totalScore}
-            statesRemaining={statesRemaining}
-            totalStates={gameStates.length}
-          />
-        )}
-      </Sidebar>
-
       <main className="game-main">
-        <button
-          className="mobile-menu-toggle left"
-          onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
-          aria-label="Toggle clue panel"
-        >
-          ☰
-        </button>
+        {/* Clue Display - Above the map for mobile-friendly layout */}
+        {currentState && (
+          <div className="clue-header">
+            <div className="clue-header-content">
+              <div className="clue-level-indicator">
+                <span className="clue-badge">Clue {currentState.clueLevel}</span>
+                <span className="progress-badge">
+                  {currentIndex + 1} of {gameStates.length}
+                </span>
+              </div>
+              <div className="clue-text-main">
+                {currentState.currentClue}
+              </div>
+              <div className="clue-actions">
+                <button
+                  className="hint-button-inline"
+                  onClick={handleRequestHint}
+                  disabled={currentState.hintUsed || currentState.attempts > 0 || currentState.clueLevel >= 3}
+                >
+                  💡 Get Hint
+                </button>
+                <div className="score-inline">
+                  Score: <strong>{totalScore}</strong> | Time: <strong>{Math.floor(elapsedTime / 60)}:{(elapsedTime % 60).toString().padStart(2, '0')}</strong>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
 
-        <Map
-          onStateClick={handleStateClick}
-          completedStates={completedStates}
-          incorrectState={incorrectState}
-          allStates={allStates}
-        />
+        {/* Map */}
+        <div className="map-section">
+          <Map
+            onStateClick={handleStateClick}
+            completedStates={completedStates}
+            incorrectState={incorrectState}
+            allStates={allStates}
+          />
+        </div>
 
+        {/* Stats button for desktop - opens sidebar */}
         <button
-          className="mobile-menu-toggle right"
+          className="stats-toggle-btn"
           onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
-          aria-label="Toggle stats panel"
+          aria-label="Toggle detailed stats"
         >
-          📊
+          📊 Stats
         </button>
       </main>
 
+      {/* Right Sidebar - Detailed stats (optional on mobile) */}
       <Sidebar position="right" isOpen={rightSidebarOpen} onClose={() => setRightSidebarOpen(false)}>
         <ScorePanel
           gameMode={gameMode}

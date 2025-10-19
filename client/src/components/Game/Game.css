@@ -1,18 +1,118 @@
 /* Game Container */
 .game-container {
   display: flex;
-  height: calc(100vh - 70px);
+  height: 100vh;
   background-color: #f5f5f5;
+}
+
+/* Adjust for when header is present */
+.app > .header + * .game-container {
+  height: calc(100vh - 70px);
 }
 
 .game-main {
   flex: 1;
   display: flex;
+  flex-direction: column;
+  position: relative;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+/* Clue Header - Above the map */
+.clue-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 16px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+}
+
+.clue-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.clue-level-indicator {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.clue-badge {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.progress-badge {
+  display: inline-block;
+  background-color: rgba(255, 255, 255, 0.25);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.clue-text-main {
+  font-size: 18px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.clue-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.hint-button-inline {
+  background-color: #ffd700;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.hint-button-inline:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+}
+
+.hint-button-inline:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.score-inline {
+  color: white;
+  font-size: 14px;
+}
+
+.score-inline strong {
+  font-weight: 700;
+}
+
+/* Map Section */
+.map-section {
+  flex: 1;
+  display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
   padding: 20px;
-  background-color: #ffffff;
+  overflow: hidden;
 }
 
 .map-container {
@@ -20,6 +120,28 @@
   max-width: 900px;
   height: 100%;
   max-height: 600px;
+}
+
+/* Stats Toggle Button */
+.stats-toggle-btn {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  transition: transform 0.2s;
+}
+
+.stats-toggle-btn:hover {
+  transform: translateY(-2px);
 }
 
 /* Mobile Menu Toggles */
@@ -371,21 +493,84 @@
     height: calc(100vh - 60px);
   }
 
-  .mobile-menu-toggle {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  .clue-header {
+    padding: 12px 16px;
   }
 
-  .game-main {
+  .clue-text-main {
+    font-size: 16px;
+  }
+
+  .clue-actions {
+    gap: 10px;
+  }
+
+  .hint-button-inline {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .score-inline {
+    font-size: 12px;
+  }
+
+  .map-section {
     padding: 10px;
   }
 
   .map-container {
-    max-height: 400px;
+    max-height: none;
+    height: 100%;
+  }
+
+  .stats-toggle-btn {
+    bottom: 10px;
+    right: 10px;
+    padding: 8px 12px;
+    font-size: 12px;
   }
 
   .state-info-grid {
     grid-template-columns: 1fr;
+  }
+
+  .modal-content {
+    padding: 20px;
+  }
+}
+
+/* Very small screens */
+@media (max-width: 480px) {
+  .clue-header {
+    padding: 10px 12px;
+  }
+
+  .clue-text-main {
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+
+  .clue-level-indicator {
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .clue-badge, .progress-badge {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+
+  .clue-actions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .hint-button-inline {
+    width: 100%;
+  }
+
+  .map-section {
+    padding: 5px;
   }
 }
