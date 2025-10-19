@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { GAME_MODES, DIFFICULTIES, GameMode, Difficulty } from '../types';
+import QuickPlay from '../components/Auth/QuickPlay';
 import '../App.css';
 
 const Home: React.FC = () => {
   const navigate = useNavigate();
   const [selectedMode, setSelectedMode] = useState<GameMode | null>(null);
   const [selectedDifficulty, setSelectedDifficulty] = useState<Difficulty>('hard');
+  const [showQuickPlay, setShowQuickPlay] = useState(false);
 
   const startGame = (mode: GameMode, difficulty: Difficulty) => {
     navigate(`/game?mode=${mode}&difficulty=${difficulty}`);
+  };
+
+  const handleQuickPlay = () => {
+    setShowQuickPlay(true);
   };
 
   return (
@@ -83,7 +89,26 @@ const Home: React.FC = () => {
                 Start Game →
               </button>
             </div>
+
+            <div className="quick-play-divider">
+              <span>or</span>
+            </div>
+
+            <button
+              className="btn-quick-play"
+              onClick={handleQuickPlay}
+            >
+              ⚡ Quick Play (No Login Required)
+            </button>
           </div>
+        )}
+
+        {showQuickPlay && selectedMode && (
+          <QuickPlay
+            gameMode={selectedMode}
+            difficulty={selectedDifficulty}
+            onClose={() => setShowQuickPlay(false)}
+          />
         )}
 
         <div className="features-section">

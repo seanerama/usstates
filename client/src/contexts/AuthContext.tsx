@@ -90,6 +90,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const guestLogin = async (username: string) => {
+    try {
+      const response = await authAPI.guestLogin(username);
+      const { token: newToken, user: newUser } = response;
+
+      localStorage.setItem('token', newToken);
+      localStorage.setItem('user', JSON.stringify(newUser));
+
+      setToken(newToken);
+      setUser(newUser);
+
+      toast.success(`Welcome, ${newUser.username}! Quick Play started.`);
+    } catch (error: any) {
+      const message = error.response?.data?.error || 'Guest login failed';
+      toast.error(message);
+      throw error;
+    }
+  };
+
   const logout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
@@ -103,6 +122,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     token,
     login,
     register,
+    guestLogin,
     logout,
     loading
   };

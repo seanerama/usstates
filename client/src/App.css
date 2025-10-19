@@ -188,6 +188,49 @@ body {
   min-width: 180px;
 }
 
+.quick-play-divider {
+  text-align: center;
+  margin: 24px 0 16px 0;
+  position: relative;
+}
+
+.quick-play-divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: #e0e0e0;
+}
+
+.quick-play-divider span {
+  background: white;
+  padding: 0 16px;
+  position: relative;
+  color: #999;
+  font-size: 14px;
+}
+
+.btn-quick-play {
+  width: 100%;
+  background: linear-gradient(135deg, #ffd700 0%, #ffb700 100%);
+  color: #333;
+  border: none;
+  border-radius: 8px;
+  padding: 16px 24px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(255, 183, 0, 0.3);
+}
+
+.btn-quick-play:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 183, 0, 0.4);
+}
+
 /* Features Section */
 .features-section {
   text-align: center;

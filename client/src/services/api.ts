@@ -44,6 +44,11 @@ export const authAPI = {
     return response.data;
   },
 
+  guestLogin: async (username: string) => {
+    const response = await api.post('/auth/guest', { username });
+    return response.data;
+  },
+
   verify: async () => {
     const response = await api.get('/auth/verify');
     return response.data;

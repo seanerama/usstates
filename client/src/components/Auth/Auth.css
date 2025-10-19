@@ -124,6 +124,39 @@
   text-decoration: underline;
 }
 
+/* Quick Play Modal */
+.quick-play-modal {
+  max-width: 450px;
+  position: relative;
+}
+
+.quick-play-description {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.close-modal-btn {
+  background: none;
+  border: 2px solid #ddd;
+  color: #666;
+  border-radius: 8px;
+  padding: 12px;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: all 0.2s;
+}
+
+.close-modal-btn:hover {
+  border-color: #999;
+  color: #333;
+}
+
 @media (max-width: 500px) {
   .auth-card {
     padding: 30px 20px;

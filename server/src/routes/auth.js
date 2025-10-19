@@ -136,4 +136,60 @@ router.get('/verify', authenticateToken, async (req, res) => {
   }
 });
 
+/**
+ * POST /api/auth/guest
+ * Quick play - create guest session with just username
+ */
+router.post('/guest', async (req, res) => {
+  const { username } = req.body;
+
+  if (!username || username.trim().length < 3 || username.trim().length > 20) {
+    return res.status(400).json({ error: 'Username must be 3-20 characters' });
+  }
+
+  try {
+    // Check if username exists as a registered user
+    const existingUser = await pool.query(
+      'SELECT id FROM users WHERE username = $1',
+      [username.trim()]
+    );
+
+    if (existingUser.rows.length > 0) {
+      // Username exists - suggest adding a number
+      return res.status(409).json({
+        error: 'Username taken. Try: ' + username.trim() + Math.floor(Math.random() * 1000)
+      });
+    }
+
+    // Create a guest user entry (no real email, dummy password)
+    const result = await pool.query(
+      'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username',
+      [username.trim(), `guest_${Date.now()}@quickplay.local`, 'GUEST_NO_PASSWORD']
+    );
+
+    const userId = result.rows[0].id;
+
+    // Generate JWT token for guest session
+    const token = jwt.sign(
+      { userId, username: username.trim(), isGuest: true },
+      process.env.JWT_SECRET,
+      { expiresIn: '24h' } // Shorter expiry for guests
+    );
+
+    res.json({
+      message: 'Guest session created',
+      token,
+      user: {
+        id: userId,
+        username: username.trim(),
+        email: null,
+        isGuest: true
+      }
+    });
+  } catch (error) {
+    console.error('Guest login error:', error);
+    res.status(500).json({ error: 'Server error during guest login' });
+  }
+});
+
 module.exports = router;
