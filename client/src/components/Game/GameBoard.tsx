@@ -64,6 +64,11 @@ const GameBoard: React.FC = () => {
         const statesData = await gameAPI.getAllStates();
         console.log('>>> States data received for anonymous user:', statesData.states?.length, 'states');
 
+        // Debug: Show unique regions in the data
+        const uniqueRegions = [...new Set(statesData.states.map((s: State) => s.region))];
+        console.log('>>> Available regions in data:', uniqueRegions);
+        console.log('>>> Sample state:', statesData.states[0]);
+
         // Filter states by region if not full_usa
         let filteredStates = statesData.states;
         if (gameMode !== 'full_usa') {
