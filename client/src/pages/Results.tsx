@@ -10,6 +10,7 @@ const Results: React.FC = () => {
   const score = parseInt(searchParams.get('score') || '0');
   const timeSeconds = parseInt(searchParams.get('time') || '0');
   const mode = (searchParams.get('mode') || 'full_usa') as GameMode;
+  const isAnonymous = searchParams.get('anonymous') === 'true';
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -55,19 +56,52 @@ const Results: React.FC = () => {
           <p>{getPerformanceMessage(score)}</p>
         </div>
 
+        {isAnonymous && (
+          <div className="anonymous-prompt" style={{
+            background: 'linear-gradient(135deg, #ffd700 0%, #ffb700 100%)',
+            padding: '20px',
+            borderRadius: '12px',
+            marginBottom: '24px',
+            textAlign: 'center'
+          }}>
+            <h3 style={{ marginTop: 0, color: '#333' }}>Want to save your score?</h3>
+            <p style={{ color: '#555', marginBottom: '16px' }}>
+              Register an account to save your scores to the leaderboard and track your progress!
+            </p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button
+                className="btn-primary"
+                onClick={() => navigate('/register')}
+                style={{ minWidth: '140px' }}
+              >
+                Register Now
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={() => navigate('/login')}
+                style={{ minWidth: '140px' }}
+              >
+                Login
+              </button>
+            </div>
+          </div>
+        )}
+
         <div className="results-actions">
           <button
             className="btn-primary"
-            onClick={() => navigate(`/game?mode=${mode}`)}
+            onClick={() => navigate(`/game?mode=${mode}&difficulty=${searchParams.get('difficulty') || 'hard'}&anonymous=true`)}
           >
             Play Again
           </button>
-          <button
-            className="btn-secondary"
-            onClick={() => navigate('/leaderboard')}
-          >
-            View Leaderboard
-          </button>
+          {!isAnonymous && (
+            <button
+              className="btn-secondary"
+              onClick={() => navigate('/leaderboard')}
+            >
+              View Leaderboard
+            </button>
+          )}
           <button
             className="btn-secondary"
             onClick={() => navigate('/')}

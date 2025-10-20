@@ -16,8 +16,9 @@ const GameBoard: React.FC = () => {
   const navigate = useNavigate();
   const gameMode = (searchParams.get('mode') || 'full_usa') as GameMode;
   const difficulty = (searchParams.get('difficulty') || 'hard') as Difficulty;
+  const isAnonymous = searchParams.get('anonymous') === 'true';
 
-  console.log('Game mode:', gameMode, 'Difficulty:', difficulty);
+  console.log('Game mode:', gameMode, 'Difficulty:', difficulty, 'Anonymous:', isAnonymous);
 
   const [gameStates, setGameStates] = useState<GameState[]>([]);
   const [allStates, setAllStates] = useState<State[]>([]);
@@ -51,28 +52,79 @@ const GameBoard: React.FC = () => {
   const initializeGame = async () => {
     try {
       setLoading(true);
-      console.log('Starting game with mode:', gameMode, 'difficulty:', difficulty);
+      console.log('Starting game with mode:', gameMode, 'difficulty:', difficulty, 'anonymous:', isAnonymous);
 
-      const [sessionData, statesData] = await Promise.all([
-        gameAPI.startSession(gameMode, difficulty),
-        gameAPI.getAllStates()
-      ]);
+      if (isAnonymous) {
+        // Anonymous play - load states directly from public API without session
+        const statesData = await gameAPI.getAllStates();
+        console.log('States data received:', statesData);
 
-      console.log('Session data received:', sessionData);
-      console.log('States data received:', statesData);
+        // Filter states by region if not full_usa
+        let filteredStates = statesData.states;
+        if (gameMode !== 'full_usa') {
+          const regionName = gameMode.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+          filteredStates = statesData.states.filter((s: State) => s.region === regionName);
+        }
 
-      setSessionId(sessionData.sessionId);
-      const mappedStates = sessionData.states.map((s: any) => ({
-        ...s,
-        attempts: 0,
-        hintUsed: false,
-        completed: false,
-        score: 0
-      }));
+        // Generate clues based on difficulty
+        const mappedStates = filteredStates.map((s: State) => {
+          let clue_1, clue_2, clue_3;
 
-      console.log('Mapped game states:', mappedStates);
-      setGameStates(mappedStates);
-      setAllStates(statesData.states);
+          if (difficulty === 'easy') {
+            clue_1 = `State: ${s.name}`;
+            clue_2 = `Capital: ${s.capital}`;
+            clue_3 = s.clue_1;
+          } else if (difficulty === 'medium') {
+            clue_1 = `Capital: ${s.capital}`;
+            clue_2 = s.clue_1;
+            clue_3 = s.clue_2;
+          } else {
+            clue_1 = s.clue_1;
+            clue_2 = s.clue_2;
+            clue_3 = s.clue_3;
+          }
+
+          return {
+            ...s,
+            clue_1,
+            clue_2,
+            clue_3,
+            currentClue: clue_1,
+            clueLevel: 1,
+            attempts: 0,
+            hintUsed: false,
+            completed: false,
+            score: 0
+          };
+        });
+
+        setSessionId('anonymous');
+        setGameStates(mappedStates);
+        setAllStates(statesData.states);
+      } else {
+        // Authenticated play - use backend session
+        const [sessionData, statesData] = await Promise.all([
+          gameAPI.startSession(gameMode, difficulty),
+          gameAPI.getAllStates()
+        ]);
+
+        console.log('Session data received:', sessionData);
+        console.log('States data received:', statesData);
+
+        setSessionId(sessionData.sessionId);
+        const mappedStates = sessionData.states.map((s: any) => ({
+          ...s,
+          attempts: 0,
+          hintUsed: false,
+          completed: false,
+          score: 0
+        }));
+
+        console.log('Mapped game states:', mappedStates);
+        setGameStates(mappedStates);
+        setAllStates(statesData.states);
+      }
+
       setStartTime(Date.now());
       setTotalScore(0);
       setCurrentIndex(0);
@@ -234,25 +286,39 @@ const GameBoard: React.FC = () => {
   };
 
   const completeGame = async () => {
-    try {
-      const timeSeconds = Math.floor((Date.now() - startTime) / 1000);
-      const response = await gameAPI.completeGame(gameMode, totalScore, timeSeconds);
+    const timeSeconds = Math.floor((Date.now() - startTime) / 1000);
 
-      toast.success(`Game complete! Final score: ${totalScore}`);
+    if (isAnonymous) {
+      // Anonymous user - show score but don't save to leaderboard
+      toast.success(`Game complete! Final score: ${totalScore}`, {
+        autoClose: 3000
+      });
 
-      if (response.madeLeaderboard) {
-        toast.success(`🎉 You made the leaderboard at #${response.leaderboardPosition}!`, {
-          autoClose: 5000
-        });
-      }
-
-      // Navigate to results after a delay
+      // Navigate to results with anonymous flag
       setTimeout(() => {
-        navigate(`/results?score=${totalScore}&time=${timeSeconds}&mode=${gameMode}`);
+        navigate(`/results?score=${totalScore}&time=${timeSeconds}&mode=${gameMode}&anonymous=true`);
       }, 2000);
-    } catch (error) {
-      toast.error('Failed to save score');
-      console.error(error);
+    } else {
+      // Authenticated user - save score to leaderboard
+      try {
+        const response = await gameAPI.completeGame(gameMode, totalScore, timeSeconds);
+
+        toast.success(`Game complete! Final score: ${totalScore}`);
+
+        if (response.madeLeaderboard) {
+          toast.success(`🎉 You made the leaderboard at #${response.leaderboardPosition}!`, {
+            autoClose: 5000
+          });
+        }
+
+        // Navigate to results after a delay
+        setTimeout(() => {
+          navigate(`/results?score=${totalScore}&time=${timeSeconds}&mode=${gameMode}`);
+        }, 2000);
+      } catch (error) {
+        toast.error('Failed to save score');
+        console.error(error);
+      }
     }
   };
 
