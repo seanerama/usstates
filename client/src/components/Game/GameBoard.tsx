@@ -72,18 +72,21 @@ const GameBoard: React.FC = () => {
         // Filter states by region if not full_usa
         let filteredStates = statesData.states;
         if (gameMode !== 'full_usa') {
-          // Map game mode to region name - must match database exactly
-          const regionMapping: { [key: string]: string } = {
-            'northeast': 'Northeast',
-            'mid_atlantic': 'Mid-Atlantic',
-            'southeast': 'Southeast',
-            'midwest': 'Midwest',
-            'southwest': 'Southwest',
-            'west': 'West'
+          // Use abbreviations to filter by region (matching backend logic)
+          const REGIONS: { [key: string]: string[] } = {
+            northeast: ['ME', 'NH', 'VT', 'MA', 'RI', 'CT', 'NY', 'NJ', 'PA'],
+            mid_atlantic: ['DE', 'MD', 'VA', 'WV', 'DC'],
+            southeast: ['NC', 'SC', 'GA', 'FL', 'AL', 'MS', 'TN', 'KY', 'AR', 'LA'],
+            midwest: ['OH', 'IN', 'IL', 'MI', 'WI', 'MN', 'IA', 'MO', 'ND', 'SD', 'NE', 'KS'],
+            southwest: ['TX', 'OK', 'NM', 'AZ'],
+            west: ['CA', 'NV', 'UT', 'CO', 'WY', 'MT', 'ID', 'OR', 'WA', 'AK', 'HI']
           };
-          const regionName = regionMapping[gameMode] || gameMode;
-          console.log('>>> Filtering by region:', regionName);
-          filteredStates = statesData.states.filter((s: State) => s.region === regionName);
+
+          const regionAbbreviations = REGIONS[gameMode] || [];
+          console.log('>>> Filtering by abbreviations:', regionAbbreviations);
+          filteredStates = statesData.states.filter((s: State) =>
+            regionAbbreviations.includes(s.abbreviation)
+          );
           console.log('>>> Filtered states count:', filteredStates.length);
         }
 
