@@ -68,20 +68,22 @@ const GameBoard: React.FC = () => {
 
         // Generate clues based on difficulty
         const mappedStates = filteredStates.map((s: State) => {
-          let clue_1, clue_2, clue_3;
+          let clue_1: string;
+          let clue_2: string;
+          let clue_3: string;
 
           if (difficulty === 'easy') {
             clue_1 = `State: ${s.name}`;
             clue_2 = `Capital: ${s.capital}`;
-            clue_3 = s.clue_1;
+            clue_3 = s.clue_1 || 'No clue available';
           } else if (difficulty === 'medium') {
             clue_1 = `Capital: ${s.capital}`;
-            clue_2 = s.clue_1;
-            clue_3 = s.clue_2;
+            clue_2 = s.clue_1 || 'No clue available';
+            clue_3 = s.clue_2 || 'No clue available';
           } else {
-            clue_1 = s.clue_1;
-            clue_2 = s.clue_2;
-            clue_3 = s.clue_3;
+            clue_1 = s.clue_1 || 'No clue available';
+            clue_2 = s.clue_2 || 'No clue available';
+            clue_3 = s.clue_3 || 'No clue available';
           }
 
           return {
