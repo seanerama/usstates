@@ -17,12 +17,12 @@ const REGIONS = {
 
 /**
  * GET /api/game/states
- * Get all states with basic info (no clues)
+ * Get all states with clues (public endpoint for anonymous play)
  */
-router.get('/states', authenticateToken, async (req, res) => {
+router.get('/states', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, name, capital, region, abbreviation FROM states ORDER BY name'
+      'SELECT id, name, capital, region, abbreviation, clue_1, clue_2, clue_3 FROM states ORDER BY name'
     );
 
     res.json({ states: result.rows });
@@ -34,9 +34,9 @@ router.get('/states', authenticateToken, async (req, res) => {
 
 /**
  * GET /api/game/states/:id
- * Get detailed information for a specific state
+ * Get detailed information for a specific state (public endpoint)
  */
-router.get('/states/:id', authenticateToken, async (req, res) => {
+router.get('/states/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
