@@ -81,6 +81,8 @@ const AppContent: React.FC = () => {
         <Route path="/" element={<Home />} />
         {/* Game is now public - guests can play */}
         <Route path="/game" element={<GameBoard />} />
+        {/* Results is now public - guests can see their scores */}
+        <Route path="/results" element={<Results />} />
         <Route
           path="/leaderboard"
           element={
@@ -94,14 +96,6 @@ const AppContent: React.FC = () => {
           element={
             <ProtectedRoute>
               <Progress />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/results"
-          element={
-            <ProtectedRoute>
-              <Results />
             </ProtectedRoute>
           }
         />
