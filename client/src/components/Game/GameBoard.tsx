@@ -52,12 +52,17 @@ const GameBoard: React.FC = () => {
   const initializeGame = async () => {
     try {
       setLoading(true);
-      console.log('Starting game with mode:', gameMode, 'difficulty:', difficulty, 'anonymous:', isAnonymous);
+      console.log('=== INITIALIZING GAME ===');
+      console.log('Game mode:', gameMode);
+      console.log('Difficulty:', difficulty);
+      console.log('Is Anonymous:', isAnonymous);
+      console.log('URL params:', searchParams.toString());
 
       if (isAnonymous) {
+        console.log('>>> Starting ANONYMOUS game session');
         // Anonymous play - load states directly from public API without session
         const statesData = await gameAPI.getAllStates();
-        console.log('States data received:', statesData);
+        console.log('>>> States data received for anonymous user:', statesData.states?.length, 'states');
 
         // Filter states by region if not full_usa
         let filteredStates = statesData.states;

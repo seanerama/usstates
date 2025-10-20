@@ -22,7 +22,9 @@ const QuickPlay: React.FC<QuickPlayProps> = ({ onClose }) => {
   const handleDifficultySelect = (difficulty: Difficulty) => {
     setSelectedDifficulty(difficulty);
     // Navigate directly to game - no authentication needed!
-    navigate(`/game?mode=${selectedMode}&difficulty=${difficulty}&anonymous=true`);
+    const gameUrl = `/game?mode=${selectedMode}&difficulty=${difficulty}&anonymous=true`;
+    console.log('=== QUICK PLAY - Navigating to:', gameUrl);
+    navigate(gameUrl);
     onClose();
   };
 

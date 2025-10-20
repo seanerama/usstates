@@ -23,10 +23,23 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    console.log('API Error intercepted:', error.response?.status, error.config?.url);
+
+    // Only redirect to login if it's an authenticated endpoint
+    // Don't redirect for public endpoints like /game/states
     if (error.response?.status === 403 || error.response?.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/login';
+      const url = error.config?.url || '';
+      const publicEndpoints = ['/game/states', '/auth/login', '/auth/register', '/auth/guest'];
+      const isPublicEndpoint = publicEndpoints.some(endpoint => url.includes(endpoint));
+
+      if (!isPublicEndpoint) {
+        console.log('Redirecting to login due to 401/403 on protected endpoint:', url);
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = '/login';
+      } else {
+        console.log('Skipping redirect - public endpoint:', url);
+      }
     }
     return Promise.reject(error);
   }
