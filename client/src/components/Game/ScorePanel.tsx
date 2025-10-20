@@ -7,15 +7,20 @@ interface ScorePanelProps {
   gameMode: GameMode;
   currentScore: number;
   elapsedTime: number;
+  isAnonymous?: boolean;
 }
 
-const ScorePanel: React.FC<ScorePanelProps> = ({ gameMode, currentScore, elapsedTime }) => {
+const ScorePanel: React.FC<ScorePanelProps> = ({ gameMode, currentScore, elapsedTime, isAnonymous = false }) => {
   const [topScores, setTopScores] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchTopScores();
-  }, [gameMode]);
+    if (!isAnonymous) {
+      fetchTopScores();
+    } else {
+      setLoading(false);
+    }
+  }, [gameMode, isAnonymous]);
 
   const fetchTopScores = async () => {
     try {
@@ -50,28 +55,39 @@ const ScorePanel: React.FC<ScorePanelProps> = ({ gameMode, currentScore, elapsed
         </div>
       </div>
 
-      <div className="panel-section">
-        <h3 className="panel-subtitle">Top 5 Leaderboard</h3>
-        {loading ? (
-          <div className="loading-message">Loading...</div>
-        ) : topScores.length > 0 ? (
-          <ol className="mini-leaderboard">
-            {topScores.map((entry, index) => (
-              <li key={index} className="mini-leaderboard-item">
-                <span className="rank-badge">#{index + 1}</span>
-                <div className="leader-info">
-                  <div className="leader-name">{entry.username}</div>
-                  <div className="leader-stats">
-                    {entry.score} pts • {formatTime(entry.time_seconds)}
+      {!isAnonymous && (
+        <div className="panel-section">
+          <h3 className="panel-subtitle">Top 5 Leaderboard</h3>
+          {loading ? (
+            <div className="loading-message">Loading...</div>
+          ) : topScores.length > 0 ? (
+            <ol className="mini-leaderboard">
+              {topScores.map((entry, index) => (
+                <li key={index} className="mini-leaderboard-item">
+                  <span className="rank-badge">#{index + 1}</span>
+                  <div className="leader-info">
+                    <div className="leader-name">{entry.username}</div>
+                    <div className="leader-stats">
+                      {entry.score} pts • {formatTime(entry.time_seconds)}
+                    </div>
                   </div>
-                </div>
-              </li>
-            ))}
-          </ol>
-        ) : (
-          <p className="no-data-message">No scores yet. Be the first!</p>
-        )}
-      </div>
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <p className="no-data-message">No scores yet. Be the first!</p>
+          )}
+        </div>
+      )}
+
+      {isAnonymous && (
+        <div className="panel-section">
+          <h3 className="panel-subtitle">Playing Anonymously</h3>
+          <p className="no-data-message">
+            Register an account to compete on the leaderboard!
+          </p>
+        </div>
+      )}
     </div>
   );
 };

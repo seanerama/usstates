@@ -399,6 +399,7 @@ const GameBoard: React.FC = () => {
           gameMode={gameMode}
           currentScore={totalScore}
           elapsedTime={elapsedTime}
+          isAnonymous={isAnonymous}
         />
       </Sidebar>
 
