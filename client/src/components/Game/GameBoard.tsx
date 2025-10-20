@@ -67,8 +67,19 @@ const GameBoard: React.FC = () => {
         // Filter states by region if not full_usa
         let filteredStates = statesData.states;
         if (gameMode !== 'full_usa') {
-          const regionName = gameMode.replace('_', ' ').replace(/\b\w/g, l => l.toUpperCase());
+          // Map game mode to region name - must match database exactly
+          const regionMapping: { [key: string]: string } = {
+            'northeast': 'Northeast',
+            'mid_atlantic': 'Mid-Atlantic',
+            'southeast': 'Southeast',
+            'midwest': 'Midwest',
+            'southwest': 'Southwest',
+            'west': 'West'
+          };
+          const regionName = regionMapping[gameMode] || gameMode;
+          console.log('>>> Filtering by region:', regionName);
           filteredStates = statesData.states.filter((s: State) => s.region === regionName);
+          console.log('>>> Filtered states count:', filteredStates.length);
         }
 
         // Generate clues based on difficulty
@@ -104,6 +115,9 @@ const GameBoard: React.FC = () => {
             score: 0
           };
         });
+
+        console.log('>>> Mapped states for game:', mappedStates.length);
+        console.log('>>> First state clue check:', mappedStates[0]?.currentClue);
 
         setSessionId('anonymous');
         setGameStates(mappedStates);
