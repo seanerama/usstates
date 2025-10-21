@@ -22,7 +22,7 @@ const REGIONS = {
 router.get('/states', async (req, res) => {
   try {
     const result = await pool.query(
-      'SELECT id, name, capital, region, abbreviation, clue_1, clue_2, clue_3 FROM states ORDER BY name'
+      'SELECT id, name, capital, region, abbreviation, clue_1, clue_2, clue_3 FROM states ORDER BY RANDOM()'
     );
 
     res.json({ states: result.rows });

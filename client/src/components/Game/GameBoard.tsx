@@ -90,6 +90,9 @@ const GameBoard: React.FC = () => {
           console.log('>>> Filtered states count:', filteredStates.length);
         }
 
+        // Shuffle the states to randomize order each game
+        filteredStates = filteredStates.sort(() => Math.random() - 0.5);
+
         // Generate clues based on difficulty
         const mappedStates = filteredStates.map((s: State) => {
           let clue_1: string;
