@@ -24,6 +24,7 @@ const GameBoard: React.FC = () => {
   const [allStates, setAllStates] = useState<State[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [completedStates, setCompletedStates] = useState<Set<string>>(new Set());
+  const [incorrectStates, setIncorrectStates] = useState<Set<string>>(new Set());
   const [incorrectState, setIncorrectState] = useState<string | null>(null);
   const [totalScore, setTotalScore] = useState(0);
   const [startTime, setStartTime] = useState(Date.now());
@@ -253,6 +254,7 @@ const GameBoard: React.FC = () => {
       setGameStates(updatedStates);
 
       setCompletedStates(prev => new Set(prev).add(state.abbreviation));
+      setIncorrectStates(prev => new Set(prev).add(state.abbreviation));
 
       // Show state info
       try {
@@ -403,6 +405,7 @@ const GameBoard: React.FC = () => {
           <Map
             onStateClick={handleStateClick}
             completedStates={completedStates}
+            incorrectStates={incorrectStates}
             incorrectState={incorrectState}
             allStates={allStates}
           />

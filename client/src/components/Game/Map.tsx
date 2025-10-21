@@ -19,6 +19,7 @@ const FIPS_TO_STATE: { [key: string]: string } = {
 interface MapProps {
   onStateClick: (stateAbbr: string) => void;
   completedStates: Set<string>;
+  incorrectStates?: Set<string>;
   incorrectState: string | null;
   learnMode?: boolean;
   allStates?: State[];
@@ -27,6 +28,7 @@ interface MapProps {
 const Map: React.FC<MapProps> = ({
   onStateClick,
   completedStates,
+  incorrectStates = new Set(),
   incorrectState,
   learnMode = false,
   allStates = []
@@ -43,10 +45,13 @@ const Map: React.FC<MapProps> = ({
 
   const getFillColor = (stateAbbr: string): string => {
     if (incorrectState === stateAbbr) {
-      return '#F44336'; // Red for wrong answer
+      return '#F44336'; // Red flash for wrong click
+    }
+    if (incorrectStates.has(stateAbbr)) {
+      return '#FF0000'; // Bright red for auto-revealed (failed) states
     }
     if (completedStates.has(stateAbbr)) {
-      return '#4CAF50'; // Green for completed
+      return '#4CAF50'; // Green for correctly answered
     }
     return '#ADD8E6'; // Default light blue
   };
